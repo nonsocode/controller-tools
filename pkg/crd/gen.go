@@ -259,6 +259,13 @@ func FindKubeKinds(parser *Parser, metav1Pkg *loader.Package) []schema.GroupKind
 				// ObjectMeta and TypeMeta are named types
 				continue
 			}
+
+			   // Check if the type is an alias and get the underlying type
+		        underlyingType := namedField.Underlying()
+			underlyingNamed, isUnderlyingNamed := underlyingType.(*types.Named)
+		    	if isUnderlyingNamed {
+			        namedField = underlyingNamed
+	        	}
 			if namedField.Obj().Pkg() == nil {
 				// Embedded non-builtin universe type (specifically, it's probably `error`),
 				// so it can't be ObjectMeta or TypeMeta
